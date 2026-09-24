@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7faff">
+  <meta name="description" content="ЛАБКОМПОНЕНТ — научно-исследовательские работы, системы NTEGRA, интеграция и модернизация прецизионного оборудования для микроскопии, спектрометрии и лазерного сканирования.">
+  <title>ЛАБКОМПОНЕНТ — прецизионные устройства и оптические системы</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2307111f'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%235cc8ff' stroke-width='4'/%3E%3Cpath d='M9 37h18l8-10 7 10h13' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --ink: #edf7ff;
+      --muted: #9cb0c4;
+      --soft: #c9d7e4;
+      --bg: #07111f;
+      --bg-2: #0b192b;
+      --blue: #5cc8ff;
+      --blue-2: #187bff;
+      --cyan: #a9f0ff;
+      --line: rgba(174, 220, 255, .15);
+      --glass: rgba(10, 27, 46, .72);
+      --shadow: 0 24px 80px rgba(0, 6, 16, .42);
+      --radius: 28px;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 78% 10%, rgba(42, 133, 255, .13), transparent 34rem),
+        radial-gradient(circle at 20% 38%, rgba(92, 200, 255, .07), transparent 30rem),
+        var(--bg);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      opacity: .18;
+      background-image:
+        linear-gradient(rgba(145, 203, 255, .08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(145, 203, 255, .08) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: linear-gradient(to bottom, black, transparent 75%);
+    }
+
+    a { color: inherit; }
+    button, input, textarea, select { font: inherit; }
+    img { display: block; max-width: 100%; }
+    .wrap { width: min(calc(100% - 40px), var(--max)); margin-inline: auto; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      color: var(--cyan);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--blue); box-shadow: 0 0 12px var(--blue); }
+    .section { padding: 112px 0; position: relative; }
+    .section-head { display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px; align-items: end; margin-bottom: 54px; }
+    .section h2 { margin: 0; font-size: clamp(2.2rem, 5vw, 4.35rem); line-height: .98; letter-spacing: -.055em; }
+    .section-lead { margin: 0; max-width: 680px; color: var(--soft); font-size: clamp(1rem, 1.6vw, 1.2rem); }
+
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 40;
+      border-bottom: 1px solid transparent;
+      transition: background .3s ease, border-color .3s ease, transform .3s ease;
+    }
+    .site-header.is-scrolled { background: rgba(5, 14, 26, .82); border-color: var(--line); backdrop-filter: blur(18px); }
+    .header-row { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; letter-spacing: -.025em; }
+    .brand-mark { width: 38px; height: 38px; border: 1px solid rgba(151, 221, 255, .5); border-radius: 12px; position: relative; box-shadow: inset 0 0 18px rgba(60, 168, 255, .18), 0 0 20px rgba(60, 168, 255, .12); }
+    .brand-mark::before, .brand-mark::after { content: ""; position: absolute; inset: 9px; border: 1px solid var(--blue); border-radius: 50%; }
+    .brand-mark::after { inset: 16px -5px; border-radius: 99px; border-color: rgba(255,255,255,.9); }
+    .brand small { display: block; color: var(--muted); font-size: .58rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+    .nav { display: flex; align-items: center; gap: 28px; }
+    .nav a { color: #c9d8e6; text-decoration: none; font-size: .9rem; transition: color .2s ease; }
+    .nav a:hover { color: white; }
+    .nav-cta { padding: 11px 18px; border: 1px solid rgba(122, 213, 255, .4); border-radius: 999px; background: rgba(72, 172, 255, .08); }
+    .menu-toggle { display: none; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.04); color: white; cursor: pointer; }
+
+    .hero { min-height: 900px; padding: 158px 0 88px; display: grid; align-items: center; position: relative; isolation: isolate; }
+    .hero::after { content: ""; position: absolute; inset: auto -16vw 2% 42%; height: 55%; background: linear-gradient(98deg, transparent, rgba(38, 159, 255, .07), transparent); filter: blur(6px); transform: skewY(-8deg); z-index: -1; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(440px, .92fr); gap: 40px; align-items: center; }
+    .hero-copy { position: relative; z-index: 3; }
+    .hero h1 { margin: 0; max-width: 820px; font-size: clamp(3rem, 6.2vw, 6.5rem); line-height: .93; letter-spacing: -.07em; text-wrap: balance; }
+    .hero h1 span { color: transparent; background: linear-gradient(100deg, #fff 5%, #9adfff 50%, #5aa8ff 92%); background-clip: text; -webkit-background-clip: text; }
+    .hero-text { max-width: 730px; margin: 30px 0 0; color: var(--soft); font-size: clamp(1.05rem, 1.7vw, 1.3rem); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
+    .button { min-height: 54px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 0 24px; border: 1px solid transparent; border-radius: 14px; text-decoration: none; font-weight: 750; cursor: pointer; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+    .button:hover { transform: translateY(-3px); }
+    .button-primary { color: #04101b; background: linear-gradient(115deg, #c7f6ff, #5fcaff 55%, #68a1ff); box-shadow: 0 16px 38px rgba(66, 173, 255, .22); }
+    .button-secondary { color: white; border-color: var(--line); background: rgba(255,255,255,.035); }
+    .button svg { width: 18px; height: 18px; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 38px; color: var(--muted); font-size: .83rem; }
+    .hero-meta span { display: inline-flex; align-items: center; gap: 8px; }
+    .hero-meta span::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 12px var(--blue); }
+
+    .hero-visual { min-height: 610px; position: relative; perspective: 1200px; }
+    .visual-stage { position: absolute; inset: 0 -120px 0 -20px; transform-style: preserve-3d; transition: transform .2s ease-out; }
+    .visual-frame { position: absolute; inset: 40px 0 50px 20px; overflow: hidden; border: 1px solid rgba(159, 218, 255, .2); border-radius: 42px; box-shadow: var(--shadow), inset 0 0 50px rgba(130, 210, 255, .08); transform: rotateY(-8deg) rotateX(2deg); background: #cfe0ee; }
+    .visual-frame::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5, 17, 31, .15), transparent 45%), linear-gradient(180deg, transparent 50%, rgba(5, 17, 31, .35)); }
+    .visual-frame img { width: 100%; height: 100%; object-fit: cover; object-position: 58% center; filter: saturate(.9) contrast(1.03); transform: scale(1.03); }
+    .beam { position: absolute; z-index: 3; left: -5%; top: 53%; width: 112%; height: 2px; background: linear-gradient(90deg, transparent, #c6f4ff 35%, #2b93ff 65%, transparent); transform: rotate(-4deg); box-shadow: 0 0 8px #7fdaff, 0 0 28px rgba(52, 150, 255, .95); animation: beam 4.5s ease-in-out infinite; }
+    .orbit { position: absolute; z-index: 3; border: 1px solid rgba(207, 239, 255, .5); border-radius: 50%; transform: rotate(18deg); }
+    .orbit-a { width: 610px; height: 180px; top: 44%; left: 7%; }
+    .orbit-b { width: 520px; height: 136px; top: 47%; left: 19%; border-color: rgba(75, 168, 255, .55); transform: rotate(-13deg); }
+    .data-chip { position: absolute; z-index: 5; min-width: 182px; padding: 14px 16px; border: 1px solid rgba(179, 229, 255, .27); border-radius: 16px; color: #dff4ff; background: rgba(5, 18, 32, .68); backdrop-filter: blur(14px); box-shadow: 0 18px 36px rgba(0,0,0,.25); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; }
+    .data-chip strong { display: block; margin-top: 5px; color: white; font-size: 1.05rem; letter-spacing: -.02em; text-transform: none; }
+    .chip-a { top: 5px; right: 12%; animation: float 6s ease-in-out infinite; }
+    .chip-b { bottom: 16px; left: -4%; animation: float 6s ease-in-out -3s infinite; }
+    .axis { position: absolute; z-index: 4; right: 5%; bottom: 56px; display: grid; grid-template-columns: 18px 18px; gap: 4px; color: white; opacity: .75; font: 700 .6rem/1 monospace; }
+    .axis i { display: block; height: 1px; background: currentColor; transform-origin: left; }
+    .axis i:nth-child(1) { transform: rotate(-90deg) translateX(2px); }
+    .axis i:nth-child(2) { transform: rotate(-28deg); }
+    .axis i:nth-child(3) { transform: rotate(0); }
+    @keyframes beam { 50% { opacity: .58; filter: brightness(1.35); } }
+    @keyframes float { 50% { transform: translateY(-12px); } }
+
+    .proof-strip { padding: 0 0 28px; }
+    .proof-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid var(--line); }
+    .proof-item { padding: 26px; border-right: 1px solid var(--line); }
+    .proof-item:last-child { border-right: 0; }
+    .proof-value { margin-bottom: 6px; color: white; font-size: clamp(1.45rem, 2.6vw, 2.5rem); font-weight: 800; letter-spacing: -.04em; }
+    .proof-label { color: var(--muted); font-size: .82rem; }
+
+    .directions { background: linear-gradient(180deg, transparent, rgba(8, 24, 40, .74), transparent); }
+    .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; counter-reset: card; }
+    .cap-card { counter-increment: card; min-height: 310px; padding: 34px; position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(145deg, rgba(18, 43, 70, .78), rgba(7, 18, 32, .88)); box-shadow: inset 0 1px rgba(255,255,255,.04); transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease; }
+    .cap-card:hover { transform: translateY(-7px); border-color: rgba(109, 202, 255, .34); box-shadow: 0 25px 60px rgba(0, 8, 19, .35), inset 0 1px rgba(255,255,255,.05); }
+    .cap-card::before { content: "0" counter(card); position: absolute; right: 28px; top: 22px; color: rgba(173, 226, 255, .36); font: 700 .72rem/1 monospace; letter-spacing: .12em; }
+    .cap-card::after { content: ""; position: absolute; right: -15%; bottom: -55%; width: 270px; height: 270px; border: 1px solid rgba(84, 183, 255, .17); border-radius: 50%; box-shadow: 0 0 60px rgba(48, 153, 255, .08); }
+    .card-icon { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: 50px; border: 1px solid rgba(145, 219, 255, .25); border-radius: 14px; color: var(--cyan); background: rgba(99, 190, 255, .07); }
+    .card-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+    .cap-card h3 { margin: 0 0 12px; font-size: clamp(1.35rem, 2.4vw, 2rem); letter-spacing: -.035em; }
+    .cap-card p { margin: 0; max-width: 530px; color: var(--muted); }
+
+    .platform-shell { border: 1px solid var(--line); border-radius: 36px; background: linear-gradient(145deg, rgba(10, 31, 52, .76), rgba(7, 17, 29, .94)); box-shadow: var(--shadow); overflow: hidden; }
+    .platform-top { padding: 46px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 50px; align-items: center; border-bottom: 1px solid var(--line); }
+    .platform-top h3 { margin: 0 0 18px; font-size: clamp(2rem, 4vw, 4.2rem); line-height: .96; letter-spacing: -.055em; }
+    .platform-top p { margin: 0; color: var(--soft); font-size: 1.04rem; }
+    .scope { aspect-ratio: 1.2; position: relative; display: grid; place-items: center; }
+    .scope-ring { position: absolute; border: 1px solid rgba(133, 213, 255, .26); border-radius: 50%; animation: spin 18s linear infinite; }
+    .scope-ring:nth-child(1) { inset: 3%; }
+    .scope-ring:nth-child(2) { inset: 15%; border-style: dashed; animation-direction: reverse; animation-duration: 25s; }
+    .scope-ring:nth-child(3) { inset: 29%; box-shadow: inset 0 0 45px rgba(58, 160, 255, .12), 0 0 45px rgba(58, 160, 255, .08); }
+    .scope-core { width: 24%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #dffaff 0 7%, #77c9ff 16%, #123c67 48%, #07111f 70%); box-shadow: 0 0 60px rgba(75, 178, 255, .4); }
+    .scope-caption { position: absolute; bottom: 8%; color: var(--muted); font: 700 .68rem/1 monospace; letter-spacing: .15em; text-transform: uppercase; }
+    @keyframes spin { to { transform: rotate(1turn); } }
+    .specs { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .spec { min-height: 185px; padding: 30px; border-right: 1px solid var(--line); }
+    .spec:last-child { border-right: 0; }
+    .spec strong { display: block; margin-bottom: 18px; color: white; font-size: clamp(1.7rem, 3vw, 3.1rem); line-height: 1; letter-spacing: -.055em; }
+    .spec span { color: var(--muted); font-size: .88rem; }
+    .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 26px; overflow: hidden; }
+    .process-step { min-height: 290px; padding: 30px; background: #081523; }
+    .process-num { display: inline-flex; margin-bottom: 72px; color: var(--blue); font: 700 .75rem/1 monospace; }
+    .process-step h3 { margin: 0 0 12px; font-size: 1.22rem; }
+    .process-step p { margin: 0; color: var(--muted); font-size: .9rem; }
+
+    .research-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 18px; }
+    .research-card { min-height: 470px; padding: 42px; border: 1px solid var(--line); border-radius: 30px; position: relative; overflow: hidden; background: linear-gradient(150deg, rgba(16, 42, 66, .78), rgba(7, 17, 29, .96)); }
+    .research-card h3 { margin: 0 0 18px; font-size: clamp(1.7rem, 3vw, 3.1rem); line-height: 1.03; letter-spacing: -.045em; }
+    .research-card p { color: var(--soft); }
+    .research-card ul { padding: 0; margin: 28px 0 0; list-style: none; display: grid; gap: 12px; }
+    .research-card li { padding-left: 20px; color: var(--muted); position: relative; }
+    .research-card li::before { content: ""; position: absolute; left: 0; top: .65em; width: 6px; height: 6px; border: 1px solid var(--blue); transform: rotate(45deg); }
+    .spectrum { position: absolute; inset: auto 0 0; height: 43%; opacity: .75; }
+    .spectrum svg { width: 100%; height: 100%; }
+    .research-feature { display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, rgba(15, 61, 99, .82), rgba(7, 23, 41, .92)); }
+    .research-tag { color: var(--cyan); font: 700 .74rem/1 monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .research-link { align-self: flex-start; display: inline-flex; gap: 10px; align-items: center; margin-top: 28px; text-underline-offset: 5px; }
+
+    .contact { padding-bottom: 120px; }
+    .contact-panel { display: grid; grid-template-columns: .85fr 1.15fr; border: 1px solid rgba(127, 208, 255, .2); border-radius: 36px; overflow: hidden; background: linear-gradient(135deg, #0e2d4b, #081522 56%); box-shadow: var(--shadow); }
+    .contact-copy { padding: 54px; display: flex; flex-direction: column; }
+    .contact-copy h2 { margin: 0; max-width: 510px; font-size: clamp(2.4rem, 5vw, 5.2rem); line-height: .93; letter-spacing: -.06em; }
+    .contact-copy > p { margin: 24px 0; color: var(--soft); }
+    .contact-list { margin-top: auto; display: grid; gap: 14px; }
+    .contact-list a, .contact-list address { color: #d9e9f6; font-style: normal; text-decoration: none; }
+    .contact-label { display: block; margin-bottom: 3px; color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+    .form-wrap { padding: 54px; background: rgba(3, 12, 22, .46); border-left: 1px solid var(--line); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: grid; gap: 8px; }
+    .field-wide { grid-column: 1 / -1; }
+    label { color: #c9dce9; font-size: .82rem; }
+    input, select, textarea { width: 100%; border: 1px solid rgba(158, 216, 255, .16); border-radius: 13px; outline: none; color: white; background: rgba(5, 17, 29, .76); padding: 15px 16px; transition: border-color .2s ease, box-shadow .2s ease; }
+    select option { background: #0b192b; }
+    textarea { min-height: 132px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: rgba(92, 200, 255, .72); box-shadow: 0 0 0 4px rgba(92, 200, 255, .09); }
+    .check { grid-column: 1 / -1; display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; color: var(--muted); font-size: .77rem; }
+    .check input { width: 17px; height: 17px; margin: 2px 0 0; accent-color: var(--blue-2); }
+    .check a { text-underline-offset: 3px; }
+    .submit-row { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .form-status { min-height: 1.5em; color: var(--cyan); font-size: .8rem; }
+
+    .footer { padding: 34px 0 40px; border-top: 1px solid var(--line); }
+    .footer-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 32px; align-items: start; }
+    .footer p { margin: 10px 0 0; color: var(--muted); font-size: .8rem; }
+    .footer h3 { margin: 0 0 10px; color: #d9e9f6; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+    .footer a { color: var(--muted); text-decoration: none; font-size: .8rem; }
+    .footer a:hover { color: white; }
+    .legal { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); color: #6f879c; font-size: .73rem; }
+
+    .applications-shell { display: grid; grid-template-columns: .82fr 1.18fr; gap: 18px; }
+    .application-intro, .application-list { border: 1px solid var(--line); border-radius: 30px; background: white; box-shadow: var(--shadow); }
+    .application-intro { padding: 42px; position: relative; overflow: hidden; }
+    .application-intro::after { content: ""; position: absolute; width: 280px; height: 280px; right: -110px; bottom: -130px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 142, 255, .18), transparent 68%); }
+    .application-intro h3 { margin: 0 0 18px; font-size: clamp(1.8rem, 3.3vw, 3.3rem); line-height: 1; letter-spacing: -.05em; }
+    .application-intro p { margin: 0; color: var(--muted); }
+    .application-list { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+    .application-item { min-height: 178px; padding: 28px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .application-item:nth-child(2n) { border-right: 0; }
+    .application-item:nth-last-child(-n+2) { border-bottom: 0; }
+    .application-item span { display: inline-flex; width: 32px; height: 32px; align-items: center; justify-content: center; margin-bottom: 28px; border-radius: 10px; color: var(--blue-2); background: #e9f4ff; font: 800 .72rem/1 monospace; }
+    .application-item h3 { margin: 0 0 8px; color: var(--ink); font-size: 1.05rem; }
+    .application-item p { margin: 0; color: var(--muted); font-size: .86rem; }
+    .support-bar { margin-top: 18px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 28px; border: 1px solid rgba(25, 116, 220, .14); border-radius: 24px; background: linear-gradient(110deg, #eaf5ff, #f9fcff); }
+    .support-bar strong { display: block; margin-bottom: 5px; color: var(--ink); font-size: 1.06rem; }
+    .support-bar p { margin: 0; color: var(--muted); font-size: .88rem; }
+
+    .equipment-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .equipment-card { min-height: 430px; padding: 34px; display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: rgba(255,255,255,.92); box-shadow: 0 20px 58px rgba(31, 86, 137, .08); transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease; }
+    .equipment-card::after { content: ""; position: absolute; right: -90px; top: -100px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(53, 156, 242, .14), transparent 68%); pointer-events: none; }
+    .equipment-card:hover { transform: translateY(-6px); border-color: rgba(31, 123, 209, .3); box-shadow: 0 28px 70px rgba(31, 86, 137, .14); }
+    .equipment-top { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 20px; }
+    .equipment-index { color: var(--blue-2); font: 800 .74rem/1 monospace; letter-spacing: .12em; }
+    .equipment-type { padding: 7px 10px; border-radius: 999px; color: #31536f; background: #edf6ff; font-size: .72rem; }
+    .equipment-image { aspect-ratio: 4 / 3; margin: 0 -34px 28px; position: relative; overflow: hidden; border-block: 1px solid var(--line); background: linear-gradient(145deg, #f8fbff, #eaf4ff); }
+    .equipment-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .65s cubic-bezier(.2,.75,.25,1); }
+    .equipment-card:hover .equipment-image img { transform: scale(1.035); }
+    .equipment-image-label { position: absolute; left: 18px; bottom: 16px; padding: 7px 10px; border: 1px solid rgba(31, 103, 171, .13); border-radius: 999px; color: #36536c; background: rgba(255,255,255,.84); backdrop-filter: blur(10px); font-size: .66rem; letter-spacing: .04em; }
+    .equipment-card h3 { margin: 0 0 14px; color: var(--ink); font-size: clamp(1.65rem, 3vw, 2.65rem); line-height: 1; letter-spacing: -.045em; }
+    .equipment-card h3 strong { color: var(--blue-2); font-weight: 800; }
+    .equipment-card > p { margin: 0 0 22px; color: var(--soft); }
+    .equipment-card ul { margin: 0 0 26px; padding: 0; list-style: none; display: grid; gap: 9px; }
+    .equipment-card li { padding-left: 18px; position: relative; color: var(--muted); font-size: .86rem; }
+    .equipment-card li::before { content: ""; position: absolute; left: 0; top: .65em; width: 6px; height: 6px; border-radius: 50%; background: #39a8e8; }
+    .equipment-upgrade { margin: auto 0 22px; padding: 13px 15px; border-left: 2px solid #2497df; color: #31536f; background: #f2f8fe; font-size: .8rem; }
+    .equipment-link { align-self: flex-start; color: var(--blue-2); font-weight: 750; font-size: .84rem; text-decoration: none; }
+    .equipment-link:hover { text-decoration: underline; text-underline-offset: 5px; }
+    .upgrade-panel { margin-top: 18px; padding: 42px; display: grid; grid-template-columns: .85fr 1.15fr; gap: 42px; border: 1px solid rgba(25, 116, 220, .15); border-radius: 30px; background: linear-gradient(120deg, #e6f3ff, #ffffff 62%); box-shadow: var(--shadow); }
+    .upgrade-panel h3 { margin: 0 0 14px; color: var(--ink); font-size: clamp(1.8rem, 3.2vw, 3.2rem); line-height: 1; letter-spacing: -.05em; }
+    .upgrade-panel p { margin: 0; color: var(--muted); }
+    .upgrade-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .upgrade-item { min-height: 126px; padding: 20px; border: 1px solid rgba(25, 116, 220, .12); border-radius: 18px; background: rgba(255,255,255,.76); }
+    .upgrade-item strong { display: block; margin-bottom: 7px; color: var(--ink); font-size: .94rem; }
+    .upgrade-item span { color: var(--muted); font-size: .78rem; }
+
+    .visualization { background: linear-gradient(180deg, transparent, rgba(225, 242, 255, .72), transparent); }
+    .viz-shell { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr); gap: 18px; }
+    .viz-stage { height: 560px; position: relative; overflow: hidden; border: 1px solid rgba(52, 135, 207, .22); border-radius: 30px; background: radial-gradient(circle at 30% 18%, #173e63, #071827 60%, #04101b); box-shadow: 0 28px 75px rgba(18, 68, 111, .2); touch-action: none; }
+    .viz-stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(125deg, rgba(75, 187, 255, .08), transparent 45%, rgba(255,255,255,.03)); }
+    #surface3d { width: 100%; height: 100%; display: block; cursor: grab; }
+    #surface3d:active { cursor: grabbing; }
+    .viz-loading { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(219,241,255,.72); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; }
+    .viz-badge { position: absolute; z-index: 2; left: 20px; top: 20px; padding: 9px 12px; border: 1px solid rgba(167, 223, 255, .2); border-radius: 999px; color: #dff5ff; background: rgba(4, 16, 28, .48); backdrop-filter: blur(10px); font-size: .68rem; letter-spacing: .06em; }
+    .viz-hint { position: absolute; z-index: 2; left: 20px; bottom: 18px; display: flex; align-items: center; gap: 9px; color: #a9c7db; font-size: .72rem; }
+    .viz-hint::before { content: "↔"; width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid rgba(167, 223, 255, .2); border-radius: 50%; color: #71ceff; }
+    .viz-copy { padding: 40px; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 30px; background: rgba(255,255,255,.9); box-shadow: var(--shadow); }
+    .viz-copy h3 { margin: 0 0 18px; color: var(--ink); font-size: clamp(1.8rem, 3.3vw, 3.4rem); line-height: .98; letter-spacing: -.05em; }
+    .viz-copy > p { margin: 0; color: var(--muted); }
+    .viz-legend { margin: 34px 0; display: grid; gap: 13px; }
+    .viz-legend span { display: flex; align-items: center; gap: 11px; color: var(--soft); font-size: .82rem; }
+    .viz-legend i { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 16px currentColor; }
+    .viz-legend .peak { color: #51c9ff; background: #51c9ff; }
+    .viz-legend .valley { color: #315d9a; background: #315d9a; }
+    .viz-legend .focus { color: #ffbd4a; background: #ffbd4a; }
+    .viz-metrics { margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .viz-metric { min-height: 110px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: #f5faff; }
+    .viz-metric strong { display: block; margin-bottom: 7px; color: var(--blue-2); font-size: 1.25rem; }
+    .viz-metric span { color: var(--muted); font-size: .74rem; }
+
+    /* Светлая научно-технологичная тема */
+    :root {
+      --ink: #10243e;
+      --muted: #61748a;
+      --soft: #3e5670;
+      --bg: #f7faff;
+      --bg-2: #ffffff;
+      --blue: #1685f8;
+      --blue-2: #0863d7;
+      --cyan: #087cae;
+      --line: rgba(23, 83, 137, .13);
+      --glass: rgba(255, 255, 255, .82);
+      --shadow: 0 28px 75px rgba(31, 86, 137, .12);
+    }
+    body {
+      background:
+        radial-gradient(circle at 82% 7%, rgba(68, 160, 255, .14), transparent 32rem),
+        radial-gradient(circle at 10% 40%, rgba(76, 204, 233, .09), transparent 29rem),
+        linear-gradient(180deg, #fbfdff 0%, #f4f8fc 54%, #ffffff 100%);
+    }
+    body::before { opacity: .28; background-image: linear-gradient(rgba(28, 102, 168, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(28, 102, 168, .07) 1px, transparent 1px); }
+    .site-header.is-scrolled { background: rgba(255, 255, 255, .82); border-color: var(--line); box-shadow: 0 10px 35px rgba(31, 86, 137, .06); }
+    .brand { color: var(--ink); }
+    .brand-mark { background: rgba(255,255,255,.75); border-color: rgba(35, 133, 221, .35); box-shadow: inset 0 0 18px rgba(60, 168, 255, .13), 0 8px 22px rgba(34, 116, 189, .1); }
+    .brand-mark::after { border-color: #125ba7; }
+    .nav a { color: #4b627a; }
+    .nav a:hover { color: var(--blue-2); }
+    .nav-cta { color: #075fc9 !important; border-color: rgba(21, 116, 218, .22); background: #edf7ff; }
+    .menu-toggle { color: var(--ink); background: rgba(255,255,255,.82); }
+    .hero::after { background: linear-gradient(98deg, transparent, rgba(38, 159, 255, .09), transparent); }
+    .hero h1 span { background: linear-gradient(100deg, #0c5ec0 5%, #1499e7 48%, #66bfe9 92%); background-clip: text; -webkit-background-clip: text; }
+    .button-primary { color: white; background: linear-gradient(115deg, #0870e4, #18a0ea 58%, #4dbddc); box-shadow: 0 16px 38px rgba(23, 125, 218, .2); }
+    .button-secondary { color: var(--ink); border-color: rgba(31, 92, 146, .16); background: rgba(255,255,255,.75); box-shadow: 0 10px 30px rgba(39, 98, 150, .07); }
+    .visual-frame { border-color: rgba(39, 119, 188, .18); box-shadow: 0 32px 90px rgba(30, 89, 143, .2), inset 0 0 50px rgba(255,255,255,.25); }
+    .data-chip { color: #33516c; border-color: rgba(43, 119, 183, .17); background: rgba(255, 255, 255, .8); box-shadow: 0 18px 36px rgba(24, 68, 110, .14); }
+    .data-chip strong { color: var(--ink); }
+    .axis { color: #0c61b6; }
+    .proof-grid { background: rgba(255,255,255,.55); border-radius: 22px; box-shadow: 0 14px 42px rgba(41, 99, 150, .06); }
+    .proof-value { color: var(--ink); }
+    .directions { background: linear-gradient(180deg, transparent, rgba(224, 240, 253, .7), transparent); }
+    .cap-card { background: rgba(255,255,255,.88); box-shadow: 0 20px 60px rgba(31, 86, 137, .08), inset 0 1px white; }
+    .cap-card:hover { border-color: rgba(39, 134, 220, .3); box-shadow: 0 28px 65px rgba(31, 86, 137, .14), inset 0 1px white; }
+    .cap-card::before { color: rgba(18, 91, 156, .42); }
+    .cap-card::after { border-color: rgba(48, 147, 231, .13); box-shadow: 0 0 60px rgba(48, 153, 255, .06); }
+    .card-icon { color: var(--blue-2); border-color: rgba(35, 132, 219, .18); background: #eef7ff; }
+    .platform-shell { background: rgba(255,255,255,.92); box-shadow: var(--shadow); }
+    .scope-ring { border-color: rgba(24, 120, 208, .25); }
+    .scope-core { background: radial-gradient(circle at 40% 35%, #fff 0 7%, #77c9ff 16%, #2f79b7 48%, #e4f3ff 72%); box-shadow: 0 0 60px rgba(75, 178, 255, .26); }
+    .spec strong { color: var(--ink); }
+    .process-step { background: rgba(255,255,255,.94); }
+    .research-card { background: linear-gradient(150deg, #ffffff, #f2f8fe); box-shadow: 0 22px 65px rgba(31, 86, 137, .08); }
+    .research-feature { background: linear-gradient(135deg, #e7f4ff, #f9fcff 62%); }
+    .research-link { color: var(--blue-2); }
+    .contact-panel { border-color: rgba(30, 112, 184, .15); background: linear-gradient(135deg, #eaf6ff, #ffffff 58%); }
+    .contact-list a, .contact-list address { color: #183a59; }
+    .form-wrap { background: rgba(255,255,255,.7); }
+    label { color: #34526d; }
+    input, select, textarea { color: var(--ink); background: white; border-color: rgba(28, 99, 161, .18); }
+    select option { background: white; }
+    .footer h3 { color: #294963; }
+    .footer a { color: #607489; }
+    .footer a:hover { color: var(--blue-2); }
+    .legal { color: #8191a2; }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .75s ease, transform .75s cubic-bezier(.2,.75,.25,1); }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    @media (max-width: 1050px) {
+      .nav { gap: 16px; }
+      .nav a { font-size: .82rem; }
+      .hero { min-height: auto; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-copy { max-width: 850px; }
+      .hero-visual { min-height: 540px; }
+      .visual-stage { inset-inline: 0; }
+      .section-head { grid-template-columns: 1fr; gap: 22px; }
+      .specs, .process-grid { grid-template-columns: repeat(2, 1fr); }
+      .spec:nth-child(2) { border-right: 0; }
+      .spec:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .research-grid, .contact-panel { grid-template-columns: 1fr; }
+      .applications-shell { grid-template-columns: 1fr; }
+      .upgrade-panel, .viz-shell { grid-template-columns: 1fr; }
+      .form-wrap { border-left: 0; border-top: 1px solid var(--line); }
+    }
+
+    @media (max-width: 780px) {
+      .wrap { width: min(calc(100% - 28px), var(--max)); }
+      .section { padding: 82px 0; }
+      .nav { display: none; position: absolute; top: 70px; left: 14px; right: 14px; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(5, 16, 29, .96); box-shadow: var(--shadow); flex-direction: column; align-items: stretch; }
+      .nav { background: rgba(255, 255, 255, .97); }
+      .nav.is-open { display: flex; }
+      .nav a { padding: 10px; }
+      .menu-toggle { display: inline-grid; place-items: center; }
+      .hero { padding-top: 126px; }
+      .hero h1 { font-size: clamp(2.8rem, 14vw, 5rem); }
+      .hero-visual { min-height: 410px; }
+      .visual-frame { inset: 32px 0 32px; border-radius: 28px; transform: none; }
+      .visual-frame img { object-position: 64% center; }
+      .orbit-a { width: 420px; }
+      .orbit-b { width: 350px; }
+      .chip-a { right: 3%; }
+      .chip-b { left: 2%; }
+      .proof-grid { grid-template-columns: 1fr 1fr; }
+      .proof-item:nth-child(2) { border-right: 0; }
+      .proof-item:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .cards { grid-template-columns: 1fr; }
+      .equipment-grid { grid-template-columns: 1fr; }
+      .platform-top { grid-template-columns: 1fr; padding: 30px; }
+      .scope { max-width: 420px; width: 100%; margin-inline: auto; }
+      .process-grid { grid-template-columns: 1fr; }
+      .process-step { min-height: 230px; }
+      .process-num { margin-bottom: 44px; }
+      .research-card { min-height: 420px; padding: 30px; }
+      .support-bar { align-items: flex-start; flex-direction: column; }
+      .upgrade-panel, .viz-copy { padding: 30px 24px; }
+      .contact-copy, .form-wrap { padding: 34px 24px; }
+      .footer-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 540px) {
+      .brand small { display: none; }
+      .hero-actions .button { width: 100%; }
+      .hero-meta { gap: 10px 18px; }
+      .hero-visual { min-height: 340px; }
+      .data-chip { min-width: 145px; font-size: .62rem; }
+      .data-chip strong { font-size: .87rem; }
+      .proof-item { padding: 22px 14px; }
+      .cap-card { min-height: 290px; padding: 28px; }
+      .specs { grid-template-columns: 1fr; }
+      .spec { border-right: 0; border-bottom: 1px solid var(--line); }
+      .spec:last-child { border-bottom: 0; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field-wide, .check, .submit-row { grid-column: auto; }
+      .application-list { grid-template-columns: 1fr; }
+      .application-item, .application-item:nth-child(2n), .application-item:nth-last-child(-n+2) { border-right: 0; border-bottom: 1px solid var(--line); }
+      .application-item:last-child { border-bottom: 0; }
+      .upgrade-grid { grid-template-columns: 1fr; }
+      .viz-stage { height: 380px; }
+      .viz-metrics { grid-template-columns: 1fr; }
+      .submit-row .button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="siteHeader">
+    <div class="wrap header-row">
+      <a class="brand" href="#top" aria-label="ЛАБКОМПОНЕНТ — на главную">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>ЛАБКОМПОНЕНТ<small>precision science</small></span>
+      </a>
+      <nav class="nav" id="mainNav" aria-label="Основная навигация">
+        <a href="#directions">Направления</a>
+        <a href="#platform">Оборудование</a>
+        <a href="#visualization">3D-модель</a>
+        <a href="#applications">Применение</a>
+        <a href="#process">Как работаем</a>
+        <a class="nav-cta" href="#contact">Обсудить проект</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Открыть меню">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">НИОКР · приборостроение · оптика</p>
+          <h1>Точная наука <span>в работающем приборе</span></h1>
+          <p class="hero-text">Выполнение научно-исследовательских работ по разработке высокотехнологичных <strong>прецизионных устройств и оптических систем</strong> для задач зондовой и световой микроскопии, спектрометрии, интерферометрии, лазерного сканирования и смежных областей.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#contact">Обсудить задачу
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="button button-secondary" href="#directions">Смотреть направления</a>
+          </div>
+          <div class="hero-meta" aria-label="Ключевые компетенции">
+            <span>Оптико-механические системы</span>
+            <span>Нанометрическая точность</span>
+            <span>От идеи до прототипа</span>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="visual-stage" id="visualStage">
+            <div class="visual-frame"><img src="precision-optics.png" alt=""></div>
+            <div class="beam"></div>
+            <div class="orbit orbit-a"></div>
+            <div class="orbit orbit-b"></div>
+            <div class="data-chip chip-a">контур точности<strong>± nano scale</strong></div>
+            <div class="data-chip chip-b">оптический тракт<strong>aligned / stable</strong></div>
+            <div class="axis"><i></i><i></i><i></i><b>XYZ</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="proof-strip" aria-label="Технологические показатели">
+      <div class="wrap proof-grid reveal">
+        <div class="proof-item"><div class="proof-value">6 систем</div><div class="proof-label">специализированные конфигурации линейки NTEGRA</div></div>
+        <div class="proof-item"><div class="proof-value">40+</div><div class="proof-label">методик СЗМ, спектроскопии и нанолитографии</div></div>
+        <div class="proof-item"><div class="proof-value">СЗМ + оптика</div><div class="proof-label">совместимые измерительные каналы в одном эксперименте</div></div>
+        <div class="proof-item"><div class="proof-value">Апгрейд</div><div class="proof-label">открытая модульная архитектура оборудования</div></div>
+      </div>
+    </section>
+
+    <section class="section directions" id="directions">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div><p class="eyebrow">Компетенции</p><h2>Разрабатываем там, где важна каждая деталь</h2></div>
+          <p class="section-lead">Соединяем физику эксперимента, оптику, механику, электронику и программное управление в одной измерительной системе — под конкретный научный или промышленный сценарий.</p>
+        </div>
+        <div class="cards">
+          <article class="cap-card reveal">
+            <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M5 18h14M7 15V8l5-4 5 4v7M9 15h6M12 4v11"/></svg></div>
+            <h3>Зондовая микроскопия</h3>
+            <p>Узлы позиционирования, сканирования и регистрации для исследования морфологии, механических, электрических и магнитных свойств поверхности.</p>
+          </article>
+          <article class="cap-card reveal">
+            <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div>
+            <h3>Световая микроскопия</h3>
+            <p>Оптические тракты, осветительные и регистрирующие модули для контрастного наблюдения, наведения и контроля эксперимента в реальном времени.</p>
+          </article>
+          <article class="cap-card reveal">
+            <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M3 16c3-9 5 4 8-4s5 5 10-4M3 20h18M4 4v12"/></svg></div>
+            <h3>Спектрометрия и интерферометрия</h3>
+            <p>Прецизионные оптические схемы для спектрального анализа, контроля перемещений и совмещения измерительных каналов.</p>
+          </article>
+          <article class="cap-card reveal">
+            <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M4 7h11l5 5-5 5H4zM7 7v10M16 9l-3 3 3 3"/></svg></div>
+            <h3>Лазерное сканирование</h3>
+            <p>Системы формирования и позиционирования луча, синхронизация каналов и интеграция лазерных методов в аналитические комплексы.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="platform">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div><p class="eyebrow">Оборудование NTEGRA</p><h2>Шесть систем для разных исследовательских задач</h2></div>
+          <p class="section-lead">Подбираем не отдельный прибор, а конфигурацию под методику, объект и условия эксперимента. Системы можно развивать дополнительными измерительными, оптическими и специализированными модулями.</p>
+        </div>
+        <div class="equipment-grid">
+          <article class="equipment-card reveal">
+            <div class="equipment-top"><span class="equipment-index">01 / NTEGRA</span><span class="equipment-type">Образование</span></div>
+            <div class="equipment-image"><img src="ntegra-academia.png" width="1456" height="1092" loading="lazy" alt="Концептуальная визуализация учебной системы NTEGRA Academia"><span class="equipment-image-label">Концептуальная визуализация</span></div>
+            <h3>NTEGRA <strong>Academia</strong></h3>
+            <p>Учебный комплекс атомно-силовой и сканирующей туннельной микроскопии для освоения базовых методов и проведения лабораторных работ.</p>
+            <ul><li>Учебные АСМ- и СТМ-головки</li><li>Оптическая визуализация и подготовка зондов</li><li>Контактный, полуконтактный и бесконтактный режимы</li></ul>
+            <div class="equipment-upgrade">Масштабируется от учебного практикума до исследовательских задач и нанолитографии.</div>
+            <a class="equipment-link" href="#contact" data-equipment="NTEGRA Academia">Подобрать конфигурацию →</a>
+          </article>
+          <article class="equipment-card reveal">
+            <div class="equipment-top"><span class="equipment-index">02 / NTEGRA</span><span class="equipment-type">Универсальная СЗМ</span></div>
+            <div class="equipment-image"><img src="ntegra-prima.png" width="1456" height="1092" loading="lazy" alt="Концептуальная визуализация универсальной системы NTEGRA Prima"><span class="equipment-image-label">Концептуальная визуализация</span></div>
+            <h3>NTEGRA <strong>Prima</strong></h3>
+            <p>Универсальная модульная платформа для исследований на воздухе, в жидкостях и контролируемых условиях с выбором схемы сканирования.</p>
+            <ul><li>Более 40 методик СЗМ, спектроскопии и литографии</li><li>Сканирование образцом, зондом или обоими узлами</li><li>Открытая архитектура и подключение модулей Plug&amp;Play</li></ul>
+            <div class="equipment-upgrade">Апгрейд: магнитное поле, температура образца, ближнепольная оптика и Raman.</div>
+            <a class="equipment-link" href="#contact" data-equipment="NTEGRA Prima">Подобрать конфигурацию →</a>
+          </article>
+          <article class="equipment-card reveal">
+            <div class="equipment-top"><span class="equipment-index">03 / NTEGRA</span><span class="equipment-type">Контролируемая среда</span></div>
+            <div class="equipment-image"><img src="ntegra-aura.png" width="1456" height="1092" loading="lazy" alt="Концептуальная визуализация системы NTEGRA Aura с камерой контролируемой атмосферы"><span class="equipment-image-label">Концептуальная визуализация</span></div>
+            <h3>NTEGRA <strong>Aura</strong></h3>
+            <p>Система для измерений на воздухе, в контролируемой атмосфере и низком вакууме, включая регистрацию слабых взаимодействий.</p>
+            <ul><li>Однопроходные и многопроходные методы</li><li>Электрические, магнитные и механические свойства</li><li>Более 40 измерительных методик</li></ul>
+            <div class="equipment-upgrade">Можно дополнить жидкостной ячейкой, ближнепольной оптикой и Raman-каналом.</div>
+            <a class="equipment-link" href="#contact" data-equipment="NTEGRA Aura">Подобрать конфигурацию →</a>
+          </article>
+          <article class="equipment-card reveal">
+            <div class="equipment-top"><span class="equipment-index">04 / NTEGRA</span><span class="equipment-type">Магнитные материалы</span></div>
+            <div class="equipment-image"><img src="ntegra-mfm.png" width="1456" height="1092" loading="lazy" alt="Концептуальная визуализация магнитно-силовой системы NTEGRA MFM"><span class="equipment-image-label">Концептуальная визуализация</span></div>
+            <h3>NTEGRA <strong>MFM</strong></h3>
+            <p>Специализированная конфигурация для исследования магнитной структуры материалов во внешних вертикальных и горизонтальных полях.</p>
+            <ul><li>Статическая и динамическая магнитно-силовая микроскопия</li><li>Вертикальное поле до ±1100 Гс</li><li>Горизонтальное поле до ±2500 Гс</li></ul>
+            <div class="equipment-upgrade">Апгрейд микроскопом Керра, поляриметром и модулями магнитооптической визуализации.</div>
+            <a class="equipment-link" href="#contact" data-equipment="NTEGRA MFM">Подобрать конфигурацию →</a>
+          </article>
+          <article class="equipment-card reveal">
+            <div class="equipment-top"><span class="equipment-index">05 / NTEGRA</span><span class="equipment-type">Науки о жизни</span></div>
+            <div class="equipment-image"><img src="ntegra-vita.png" width="1456" height="1092" loading="lazy" alt="Концептуальная визуализация биологической системы NTEGRA Vita"><span class="equipment-image-label">Концептуальная визуализация</span></div>
+            <h3>NTEGRA <strong>Vita</strong></h3>
+            <p>Модульная система для биологических исследований с интеграцией зондовой и прямой либо инвертированной оптической микроскопии.</p>
+            <ul><li>Работа в жидкостных и электрохимических ячейках</li><li>Флуоресцентное картирование</li><li>Совмещённые АСМ, оптические и Raman-измерения</li></ul>
+            <div class="equipment-upgrade">Расширяется модулями контроля температуры, атмосферы и спектральных измерений.</div>
+            <a class="equipment-link" href="#contact" data-equipment="NTEGRA Vita">Подобрать конфигурацию →</a>
+          </article>
+          <article class="equipment-card reveal">
+            <div class="equipment-top"><span class="equipment-index">06 / NTEGRA</span><span class="equipment-type">Нанооптика</span></div>
+            <div class="equipment-image"><img src="ntegra-spectra.png" width="1456" height="1092" loading="lazy" alt="Концептуальная визуализация интегрированной системы NTEGRA Spectra"><span class="equipment-image-label">Концептуальная визуализация</span></div>
+            <h3>NTEGRA <strong>Spectra</strong></h3>
+            <p>Комбинированная платформа для одновременных и совмещённых СЗМ, конфокальных Raman-, фотолюминесцентных и ближнепольных измерений.</p>
+            <ul><li>Три оптических канала</li><li>Raman, PL, SNOM, TERS и TEPL</li><li>Локализованная спектроскопия с разрешением менее 10 нм</li></ul>
+            <div class="equipment-upgrade">Интегрирует СЗМ и оптическую микроспектроскопию в единую экспериментальную систему.</div>
+            <a class="equipment-link" href="#contact" data-equipment="NTEGRA Spectra">Подобрать конфигурацию →</a>
+          </article>
+        </div>
+        <div class="upgrade-panel reveal">
+          <div><p class="eyebrow">Интеграция и совместимость</p><h3>Интеграция и совместимость всей линейки</h3><p>Проектируем совместимые измерительные конфигурации на базе всей линейки NTEGRA: интегрируем каналы, синхронизируем управление и добавляем новые методы без полной замены базовой платформы.</p></div>
+          <div class="upgrade-grid">
+            <div class="upgrade-item"><strong>СЗМ + оптика</strong><span>Совместимость зондовой, световой, конфокальной и ближнепольной микроскопии.</span></div>
+            <div class="upgrade-item"><strong>Raman / PL / TERS</strong><span>Интеграция спектральных методов и корреляция данных на одном участке образца.</span></div>
+            <div class="upgrade-item"><strong>Среда эксперимента</strong><span>Жидкость, контролируемая атмосфера, вакуум, температура и внешнее магнитное поле.</span></div>
+            <div class="upgrade-item"><strong>Модернизация</strong><span>Добавление модулей, измерительных режимов, автоматизации и программных сценариев.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section visualization" id="visualization">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div><p class="eyebrow">Визуализация данных</p><h2>Нанорельеф в интерактивном 3D</h2></div>
+          <p class="section-lead">Модель показывает, как топография поверхности превращается в пространственную карту. Зажмите модель мышью или пальцем и поверните её, чтобы рассмотреть пики, впадины и выбранную область анализа.</p>
+        </div>
+        <div class="viz-shell reveal">
+          <div class="viz-stage">
+            <canvas id="surface3d" aria-label="Интерактивная трёхмерная модель нанорельефа поверхности"></canvas>
+            <div class="viz-loading" id="vizLoading">Загрузка 3D-модели</div>
+            <span class="viz-badge">AFM TOPOGRAPHY / LIVE MODEL</span>
+            <span class="viz-hint">Вращайте модель мышью или пальцем</span>
+          </div>
+          <div class="viz-copy">
+            <p class="eyebrow">Топография + спектр</p>
+            <h3>Одна поверхность — несколько каналов данных</h3>
+            <p>Интерактивная сцена иллюстрирует совмещение рельефа с точками спектрального анализа. Такой подход помогает сопоставлять морфологию и локальные оптические свойства одного участка образца.</p>
+            <div class="viz-legend" aria-label="Легенда модели">
+              <span><i class="peak"></i>Высокие участки поверхности</span>
+              <span><i class="valley"></i>Низкие участки и впадины</span>
+              <span><i class="focus"></i>Выбранная точка Raman-анализа</span>
+            </div>
+            <div class="viz-metrics">
+              <div class="viz-metric"><strong>XYZ</strong><span>пространственная карта нанорельефа</span></div>
+              <div class="viz-metric"><strong>AFM + Raman</strong><span>корреляция топографии и спектра</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="applications">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div><p class="eyebrow">Практическое применение</p><h2>Единая экосистема — разные классы задач</h2></div>
+          <p class="section-lead">Конфигурация строится вокруг объекта и измерительного сценария: от учебного комплекса и исследования поверхности до комбинированных оптических, спектральных и зондовых экспериментов.</p>
+        </div>
+        <div class="applications-shell reveal">
+          <article class="application-intro">
+            <p class="eyebrow">Области исследований</p>
+            <h3>Настраиваем систему под реальную лабораторию</h3>
+            <p>Модульная архитектура позволяет выбрать необходимые методы, среду измерения и способ сканирования, сохранив возможность дальнейшего расширения комплекса.</p>
+          </article>
+          <div class="application-list">
+            <article class="application-item"><span>01</span><h3>Материаловедение</h3><p>Электрические, магнитные и механические свойства поверхности.</p></article>
+            <article class="application-item"><span>02</span><h3>Полимеры и плёнки</h3><p>Морфология тонких органических покрытий и функциональных слоёв.</p></article>
+            <article class="application-item"><span>03</span><h3>Биология</h3><p>Исследования биологических объектов и биотехнологических материалов.</p></article>
+            <article class="application-item"><span>04</span><h3>Наноструктуры</h3><p>Анализ наноматериалов, нанообработка и манипуляции нанообъектами.</p></article>
+          </div>
+        </div>
+        <div class="support-bar reveal">
+          <div><strong>Поддержка на всём жизненном цикле оборудования</strong><p>Консультации, сопровождение измерений и постгарантийное обслуживание ранее поставленных систем.</p></div>
+          <a class="button button-secondary" href="#contact">Задать вопрос специалисту</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="process">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div><p class="eyebrow">Работа с проектом</p><h2>От физической идеи до устойчивого результата</h2></div>
+          <p class="section-lead">Начинаем с измерительной задачи и ограничений среды. Затем собираем архитектуру, проверяем критические узлы и доводим систему до воспроизводимой работы.</p>
+        </div>
+        <div class="process-grid reveal">
+          <article class="process-step"><span class="process-num">01 / задача</span><h3>Исследуем</h3><p>Фиксируем объект, метод, требуемую точность, условия эксперимента и критерии результата.</p></article>
+          <article class="process-step"><span class="process-num">02 / архитектура</span><h3>Проектируем</h3><p>Разрабатываем оптическую, механическую и управляющую части как единую измерительную систему.</p></article>
+          <article class="process-step"><span class="process-num">03 / прототип</span><h3>Проверяем</h3><p>Изготавливаем и испытываем критические узлы, измеряем стабильность и уточняем конструкцию.</p></article>
+          <article class="process-step"><span class="process-num">04 / интеграция</span><h3>Внедряем</h3><p>Собираем конфигурацию, настраиваем рабочие режимы и сопровождаем эксплуатацию оборудования.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="research">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div><p class="eyebrow">Научные разработки</p><h2>Компетенции, подтверждённые экспериментом</h2></div>
+          <p class="section-lead">Работаем не только с серийными платформами, но и с новыми исследовательскими модулями, где требуется проверить гипотезу и превратить её в воспроизводимую технологию.</p>
+        </div>
+        <div class="research-grid">
+          <article class="research-card reveal">
+            <span class="research-tag">собственная разработка</span>
+            <h3>Программный комплекс управления СЗМ</h3>
+            <p>Программный комплекс для управления сканирующими зондовыми микроскопами и их комбинациями, обработки и анализа измеренных данных.</p>
+            <ul><li>Управление СЗМ и комбинированными системами</li><li>Спектроскопические измерения и нанолитография</li><li>Обработка, анализ и структурированное хранение данных</li></ul>
+          </article>
+          <article class="research-card research-feature reveal">
+            <div>
+              <span class="research-tag">прототип / ближнепольная оптика</span>
+              <h3>Модуль с флуоресцентными зондами</h3>
+              <p>В рамках проекта по программе «Старт‑1» разработана технология синтеза коллоидных квантовых точек, подготовлена конструкторская документация, изготовлен и испытан прототип модуля для ближнепольной оптической микроскопии.</p>
+              <a class="research-link" href="#contact">Обсудить разработку <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="spectrum" aria-hidden="true">
+              <svg viewBox="0 0 900 260" preserveAspectRatio="none"><defs><linearGradient id="sg" x1="0" x2="1"><stop stop-color="#51c8ff" stop-opacity="0"/><stop offset=".42" stop-color="#51c8ff"/><stop offset=".72" stop-color="#7e9dff"/><stop offset="1" stop-color="#7e9dff" stop-opacity="0"/></linearGradient></defs><path d="M0 245 C120 240 190 230 280 215 C350 204 380 188 415 160 C455 128 470 28 500 24 C530 20 540 112 575 155 C615 203 670 224 900 238" fill="none" stroke="url(#sg)" stroke-width="3"/><path d="M0 245 C120 240 190 230 280 215 C350 204 380 188 415 160 C455 128 470 28 500 24 C530 20 540 112 575 155 C615 203 670 224 900 238V260H0Z" fill="url(#sg)" opacity=".12"/></svg>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contact" id="contact">
+      <div class="wrap">
+        <div class="contact-panel reveal">
+          <div class="contact-copy">
+            <p class="eyebrow">Обсудим задачу</p>
+            <h2>Начнём с вашего эксперимента</h2>
+            <p>Опишите объект исследования, требуемый метод и ожидаемый результат. Мы подготовим вопросы для технического обсуждения.</p>
+            <div class="contact-list">
+              <div><span class="contact-label">Телефоны</span><a href="tel:+79918559789">+7 991 855‑97‑89</a> · <a href="tel:+79773302783">+7 977 330‑27‑83</a></div>
+              <div><span class="contact-label">E-mail</span><a href="mailto:labcomponent@mail.ru">labcomponent@mail.ru</a></div>
+              <address><span class="contact-label">Почтовый адрес</span>124460, г. Москва, г. Зеленоград, пр-кт Панфиловский, д. 10, помещ. 44Н/2</address>
+            </div>
+          </div>
+          <div class="form-wrap">
+            <form class="form-grid" id="projectForm">
+              <div class="field"><label for="name">Имя *</label><input id="name" name="name" autocomplete="name" required placeholder="Как к вам обращаться"></div>
+              <div class="field"><label for="phone">Телефон *</label><input id="phone" name="phone" type="tel" autocomplete="tel" required placeholder="+7 900 000‑00‑00"></div>
+              <div class="field field-wide"><label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="email" placeholder="name@company.ru"></div>
+              <div class="field field-wide"><label for="direction">Направление проекта</label><select id="direction" name="direction"><option>Подбор системы NTEGRA</option><option>Интеграция или апгрейд оборудования</option><option>Зондовая микроскопия</option><option>Световая микроскопия</option><option>Спектрометрия / интерферометрия</option><option>Лазерное сканирование</option><option>Другая задача</option></select></div>
+              <div class="field field-wide"><label for="message">Кратко о задаче *</label><textarea id="message" name="message" required placeholder="Что нужно измерить, разработать или интегрировать?"></textarea></div>
+              <label class="check"><input type="checkbox" required><span>Я согласен на обработку переданных данных ООО «ЛАБКОМПОНЕНТ» для подготовки ответа на заявку.</span></label>
+              <div class="submit-row"><button class="button button-primary" type="submit">Отправить заявку</button><span class="form-status" id="formStatus" role="status" aria-live="polite"></span></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-row">
+        <div><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span><span>ЛАБКОМПОНЕНТ<small>precision science</small></span></a><p>Высокотехнологичные прецизионные устройства и оптические системы.</p></div>
+        <div><h3>Оборудование</h3><a href="#platform">Линейка NTEGRA</a><br><a href="#visualization">Интерактивная 3D-модель</a></div>
+        <div><h3>Компания</h3><a href="mailto:labcomponent@mail.ru">ООО «ЛАБКОМПОНЕНТ»</a><p>ИНН 5047263727 · КПП 773501001 · ОГРН 1225000049581</p></div>
+      </div>
+      <div class="legal">© 2026 ООО «ЛАБКОМПОНЕНТ».</div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const header = document.getElementById('siteHeader');
+    const menu = document.getElementById('mainNav');
+    const toggle = document.getElementById('menuToggle');
+    const visual = document.getElementById('visualStage');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const syncHeader = () => header.classList.toggle('is-scrolled', window.scrollY > 18);
+    syncHeader();
+    window.addEventListener('scroll', syncHeader, { passive: true });
+
+    toggle.addEventListener('click', () => {
+      const open = menu.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.textContent = open ? '×' : '☰';
+    });
+    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+      menu.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = '☰';
+    }));
+
+    if (!reduceMotion) {
+      document.querySelector('.hero-visual').addEventListener('pointermove', event => {
+        const box = event.currentTarget.getBoundingClientRect();
+        const x = (event.clientX - box.left) / box.width - .5;
+        const y = (event.clientY - box.top) / box.height - .5;
+        visual.style.transform = `rotateY(${x * 4}deg) rotateX(${-y * 4}deg) translate3d(${x * 8}px, ${y * 8}px, 0)`;
+      });
+      document.querySelector('.hero-visual').addEventListener('pointerleave', () => visual.style.transform = '');
+    }
+
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    }), { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach(item => observer.observe(item));
+
+    const initSurfaceModel = () => {
+      const canvas = document.getElementById('surface3d');
+      const stage = canvas?.parentElement;
+      const loading = document.getElementById('vizLoading');
+      if (!canvas || !stage || !window.THREE) {
+        if (loading) loading.textContent = '3D-модель недоступна';
+        return;
+      }
+
+      try {
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x071827, .045);
+        const camera = new THREE.PerspectiveCamera(48, 1, .1, 100);
+        camera.position.set(0, 4.8, 7.8);
+        camera.lookAt(0, .1, 0);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setClearColor(0x071827, 0);
+
+        const surface = new THREE.Group();
+        scene.add(surface);
+        const width = 8;
+        const depth = 6;
+        const cols = 72;
+        const rows = 54;
+        const heightAt = (x, z) => {
+          const peakA = 1.45 * Math.exp(-((x + 1.25) ** 2 + (z - .55) ** 2) / 1.4);
+          const peakB = 1.05 * Math.exp(-((x - 1.8) ** 2 + (z + .9) ** 2) / .85);
+          const ridge = .42 * Math.sin(x * 1.5 + z * .75) + .2 * Math.cos(z * 2.1 - x * .4);
+          const texture = .1 * Math.sin(x * 5.4) * Math.cos(z * 4.7);
+          return (peakA + peakB + ridge + texture) * .72;
+        };
+
+        const positions = [];
+        const colors = [];
+        const indices = [];
+        const low = new THREE.Color(0x17467e);
+        const mid = new THREE.Color(0x36c9ff);
+        const high = new THREE.Color(0xffc95b);
+        for (let row = 0; row <= rows; row++) {
+          const z = depth * (row / rows - .5);
+          for (let col = 0; col <= cols; col++) {
+            const x = width * (col / cols - .5);
+            const y = heightAt(x, z);
+            positions.push(x, y, z);
+            const t = Math.max(0, Math.min(1, (y + .55) / 2.15));
+            const color = t < .62
+              ? low.clone().lerp(mid, t / .62)
+              : mid.clone().lerp(high, (t - .62) / .38);
+            colors.push(color.r, color.g, color.b);
+          }
+        }
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const a = row * (cols + 1) + col;
+            const b = a + cols + 1;
+            indices.push(a, b, a + 1, b, b + 1, a + 1);
+          }
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setIndex(indices);
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geometry.computeVertexNormals();
+        const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .38, metalness: .12, side: THREE.DoubleSide });
+        const mesh = new THREE.Mesh(geometry, material);
+        surface.add(mesh);
+        const wire = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0xc8ecff, wireframe: true, transparent: true, opacity: .11 }));
+        wire.position.y = .012;
+        surface.add(wire);
+
+        [[-1.25, .55, 0x51c9ff], [1.8, -.9, 0x6ea8ff], [.65, -.25, 0xffbd4a]].forEach(([x, z, color]) => {
+          const marker = new THREE.Mesh(new THREE.SphereGeometry(.095, 20, 20), new THREE.MeshBasicMaterial({ color }));
+          marker.position.set(x, heightAt(x, z) + .16, z);
+          surface.add(marker);
+          const halo = new THREE.PointLight(color, 1.1, 2.1);
+          halo.position.copy(marker.position);
+          surface.add(halo);
+        });
+
+        scene.add(new THREE.HemisphereLight(0xbfeaff, 0x09213a, 1.35));
+        const key = new THREE.DirectionalLight(0xffffff, 1.25);
+        key.position.set(3, 7, 4);
+        scene.add(key);
+        const rim = new THREE.DirectionalLight(0x299cff, .85);
+        rim.position.set(-5, 2, -4);
+        scene.add(rim);
+
+        let dragging = false;
+        let lastX = 0;
+        let lastY = 0;
+        let targetX = -.34;
+        let targetY = -.45;
+        canvas.addEventListener('pointerdown', event => {
+          dragging = true;
+          lastX = event.clientX;
+          lastY = event.clientY;
+          canvas.setPointerCapture(event.pointerId);
+        });
+        canvas.addEventListener('pointermove', event => {
+          if (!dragging) return;
+          targetY += (event.clientX - lastX) * .008;
+          targetX = Math.max(-1.05, Math.min(.35, targetX + (event.clientY - lastY) * .006));
+          lastX = event.clientX;
+          lastY = event.clientY;
+        });
+        const stopDrag = event => {
+          dragging = false;
+          if (event.pointerId !== undefined && canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+        };
+        canvas.addEventListener('pointerup', stopDrag);
+        canvas.addEventListener('pointercancel', stopDrag);
+
+        const resize = () => {
+          const widthPx = Math.max(1, stage.clientWidth);
+          const heightPx = Math.max(1, stage.clientHeight);
+          renderer.setSize(widthPx, heightPx, false);
+          camera.aspect = widthPx / heightPx;
+          camera.updateProjectionMatrix();
+        };
+        resize();
+        new ResizeObserver(resize).observe(stage);
+        if (loading) loading.remove();
+
+        const animate = () => {
+          if (!dragging && !reduceMotion) targetY += .0012;
+          surface.rotation.x += (targetX - surface.rotation.x) * .07;
+          surface.rotation.y += (targetY - surface.rotation.y) * .07;
+          renderer.render(scene, camera);
+          requestAnimationFrame(animate);
+        };
+        animate();
+      } catch (error) {
+        if (loading) loading.textContent = '3D-модель недоступна';
+      }
+    };
+    initSurfaceModel();
+
+    document.querySelectorAll('[data-equipment]').forEach(link => link.addEventListener('click', () => {
+      const equipment = link.dataset.equipment;
+      const direction = document.getElementById('direction');
+      const message = document.getElementById('message');
+      direction.value = 'Подбор системы NTEGRA';
+      if (!message.value.trim()) message.value = `Интересует ${equipment}. Нужна консультация по конфигурации и возможностям интеграции.`;
+    }));
+
+    document.getElementById('projectForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const body = [
+        `Имя: ${data.get('name')}`,
+        `Телефон: ${data.get('phone')}`,
+        `E-mail: ${data.get('email') || 'не указан'}`,
+        `Направление: ${data.get('direction')}`,
+        '',
+        'Задача:',
+        data.get('message')
+      ].join('\n');
+      document.getElementById('formStatus').textContent = 'Открываем письмо с заполненной заявкой…';
+      window.location.href = `mailto:labcomponent@mail.ru?subject=${encodeURIComponent('Заявка на разработку — ЛАБКОМПОНЕНТ')}&body=${encodeURIComponent(body)}`;
+    });
+  </script>
+</body>
+</html>
